@@ -72,14 +72,16 @@ class multiBarChart(NVD3Chart):
             return chart;
         });
     """
-    def __init__(self, height=450, width=None, date=False, x_axis_format="%d %b %Y", **kwargs):
+    def __init__(self, height=450, width=None, date=False, x_axis_format="%d %b %Y", label_rotate=None, **kwargs):
         NVD3Chart.__init__(self, **kwargs)
         if date:
             self.set_date_flag(True)
-            self.create_x_axis('xAxis', format=x_axis_format, date=True)
+            self.create_x_axis('xAxis', format=x_axis_format, date=True, label_rotate=label_rotate)
             self.set_custom_tooltip_flag(True)
+        elif not x_axis_format or x_axis_format == 'string' or x_axis_format == 'str':
+            self.create_x_axis('xAxis', label_rotate=label_rotate)
         else:
-            self.create_x_axis('xAxis', format=".2f")
+            self.create_x_axis('xAxis', format=".2f", label_rotate=label_rotate)
         self.create_y_axis('yAxis', format=".2f")
         # must have a specified height, otherwise it superimposes both chars
         if height:

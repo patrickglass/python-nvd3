@@ -125,11 +125,9 @@ class NVD3Chart:
         if color_category:
             self.color_category = color_category
 
-        if 'stacked' in kwargs and kwargs["stacked"]:
-            self.stacked = True
-
-        if 'resize' in kwargs and kwargs["resize"]:
-            self.resize = True
+        # save the passed in named arguments to be added as options unless
+        # they are poped above
+        self.attributes = kwargs
 
         self.show_legend = kwargs.get("show_legend", True)
         self.show_labels = kwargs.get("show_labels", True)
@@ -358,8 +356,12 @@ class NVD3Chart:
             if self.color_category:
                 self.jschart += stab(2) + 'chart.color(d3.scale.%s().range());\n' % self.color_category
 
-        if self.stacked:
-            self.jschart += stab(2) + "chart.stacked(true);"
+        # if self.stacked:
+        #     self.jschart += stab(2) + "chart.stacked(true);\n"
+
+        # Allow us to set many attributes
+        for k, v in self.attributes.iteritems():
+            self.jschart += stab(2) + "chart.%s(%s);\n" % (k, str(v).lower())
 
         """
         We want now to loop through all the defined Axis and add:
@@ -368,8 +370,8 @@ class NVD3Chart:
         """
         if self.model != 'pieChart':
             for axis_name, a in list(self.axislist.items()):
-                self.jschart += stab(2) + "chart.%s\n" % axis_name
                 for attr, value in list(a.items()):
+                    self.jschart += stab(2) + "chart.%s\n" % axis_name
                     self.jschart += stab(3) + ".%s(%s);\n" % (attr, value)
 
         if self.width:
@@ -422,11 +424,12 @@ class NVD3Chart:
         if self.tag_script_js:
             self.jschart += "</script>"
 
-    def create_x_axis(self, name, label=None, format=None, date=False):
+    def create_x_axis(self, name, label=None, format=None, date=False, label_rotate=None):
         """
         Create X-axis
         """
         axis = {}
+
         if format:
             if format == 'AM_PM':
                 axis["tickFormat"] = "function(d) { return get_am_pm(parseInt(d)); }"
@@ -434,7 +437,10 @@ class NVD3Chart:
                 axis["tickFormat"] = "d3.format(',%s')" % format
 
         if label:
-            axis["axisLabel"] = label
+            axis["axisLabel"] = "'%s'" % label
+
+        if label_rotate:
+            axis["rotateLabels"] = int(label_rotate)
 
         #date format : see https://github.com/mbostock/d3/wiki/Time-Formatting
         if date:
