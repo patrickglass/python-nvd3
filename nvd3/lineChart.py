@@ -76,7 +76,7 @@ class lineChart(NVD3Chart):
         NVD3Chart.__init__(self, **kwargs)
         if date:
             self.set_date_flag(True)
-            self.create_x_axis('xAxis', 
+            self.create_x_axis('xAxis',
                                format=kwargs.get('x_axis_format','%d %b %Y'),
                                date=True)
             self.set_custom_tooltip_flag(True)
