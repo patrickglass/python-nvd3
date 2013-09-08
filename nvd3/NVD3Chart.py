@@ -360,7 +360,7 @@ class NVD3Chart:
         #     self.jschart += stab(2) + "chart.stacked(true);\n"
 
         # Allow us to set many attributes
-        for k, v in self.attributes.iteritems():
+        for k, v in self.attributes.items():
             self.jschart += stab(2) + "chart.%s(%s);\n" % (k, str(v).lower())
 
         """
